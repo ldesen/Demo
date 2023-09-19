@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>计算数据大小</title>
+  <meta charset="UTF-8">
+<style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    textarea {
+      width: 400px;
+      height: 200px;
+    }
+
+    input[type="text"] {
+      width: 400px;
+      margin-top: 10px;
+      padding: 5px;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 5px 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h2>计算数据大小</h2>
+  <label for="dataInput">输入数据：</label>
+  <br/>
+  <textarea id="dataInput" rows="10" cols="40" placeholder="请输入数据，每行一个"></textarea>
+  <br/>
+  <button onclick="calculateSize()">计算</button>
+  <br/>
+  <br/>
+  <label for="resultOutput">计算结果：</label>
+  <br/>
+  <input type="text" id="resultOutput" readonly />
+  <br/>
+  <label for="lineCountOutput">计算行数：</label>
+  <br/>
+  <input type="text" id="lineCountOutput" readonly />
+
+  <script>
+    function calculateSize() {
+      var inputData = document.getElementById("dataInput").value;
+      var lines = inputData.split("\n");
+
+      var totalSize = 0;
+      var nonEmptyLineCount = 0; // 记录非空行数
+
+      for (var i = 0; i < lines.length; i++) {
+        var line = lines[i];
+
+        // 判断是否为空行
+        if (line.trim() !== "") {
+          var sizes = line.match(/(\d+\.\d+)\((\w+)\)/g);
+
+          if (sizes) {
+            nonEmptyLineCount++; // 非空行数加1
+
+            for (var j = 0; j < sizes.length; j++) {
+              var size = sizes[j];
+              var value = parseFloat(size.match(/(\d+\.\d+)/)[1]);
+              var unit = size.match(/\((\w+)\)/)[1].toLowerCase();
+
+              if (unit === "kb") {
+                totalSize += value / 1024;
+              } else if (unit === "mb") {
+                totalSize += value;
+              }
+            }
+          }
+        }
+      }
+
+      document.getElementById("resultOutput").value = "总大小：" + totalSize.toFixed(2) + "M";
+      document.getElementById("lineCountOutput").value = "计算行数：" + nonEmptyLineCount;
+    }
+  </script>
+</body>
+</html>
